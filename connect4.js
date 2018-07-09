@@ -3,6 +3,7 @@ class Connect4 {
         this.rows = 6;
         this.cols = 7;
         this.selector = selector;
+        this.player = 'red';
         this.createGrid();
         this.setupEventListener();
     }
@@ -26,7 +27,7 @@ class Connect4 {
 
     setupEventListener(){
         const $borad = $(this.selector);
-
+        const that = this;
         function findLastEmptyCell(col){
             const cells = $(`.col[data-col='${col}']`);
             for (let i = cells.length-1; i>=0; i--) {
@@ -40,9 +41,27 @@ class Connect4 {
 
         $borad.on('mouseenter','.col.empty',function(){
             const col = $(this).data('col')
-            console.log(this)
             const $lastEmptyCell = findLastEmptyCell(col);
-            $lastEmptyCell.addClass('next-red');
+            $lastEmptyCell.addClass(`next-${that.player}`);
         })
+
+        $borad.on('mouseleave','.col',function(){
+            $('.col').removeClass(`next-${that.player}`);
+        });
+        
+        $borad.on('click','.col',function(){
+            const col = $(this).data('col');
+            const row = $(this).data('row');
+            const $lastEmptyCell = findLastEmptyCell(col);
+            $lastEmptyCell.removeClass('empty');
+            $lastEmptyCell.addClass(that.player);
+
+            const winner =that.checkForWinner(row,col)
+            that.player = (that.player === 'red') ? 'yellow' : 'red';
+            $(this).trigger('mouseenter');
+        });
+    }
+    checkForWinner(row,col){
+        console.log("hi");
     }
 }
